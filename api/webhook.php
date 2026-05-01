@@ -55,9 +55,9 @@ foreach ($items as $item) {
         $reviews  = (int)($item['reviewsCount'] ?? $item['reviews'] ?? 0);
         $place_id = $item['placeId'] ?? $item['place_id'] ?? null;
         $gmb_url  = $item['url']     ?? $item['gmb_url']  ?? null;
-        $category = trim($item['categoryName'] ?? $item['category'] ?? '');
-        $city_name= trim($item['city']  ?? extract_city($address) ?? '');
-        $state_abbr=trim($item['state'] ?? extract_state($address) ?? '');
+        $category = trim($item['_so_category'] ?? $item['categoryName'] ?? $item['category'] ?? '');
+        $city_name= trim($item['_so_city']  ?? $item['city']  ?? extract_city($address) ?? '');
+        $state_abbr=trim($item['_so_state_abbr'] ?? $item['_so_state'] ?? $item['state'] ?? extract_state($address) ?? '');
         $lat      = $item['location']['lat']  ?? $item['lat'] ?? null;
         $lng      = $item['location']['lng']  ?? $item['lng'] ?? null;
         $hours    = $item['openingHours']     ?? $item['hours'] ?? null;
