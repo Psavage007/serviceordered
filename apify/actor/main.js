@@ -16,90 +16,6 @@ await Actor.init();
 
 const input = await Actor.getInput() ?? {};
 
-// ── Config ────────────────────────────────────────────────────────────────
-const WEBHOOK_URL    = input.webhookUrl    || 'https://serviceordered.com/api/webhook.php';
-const WEBHOOK_SECRET = input.webhookSecret || '';
-const MAX_PER_SEARCH = input.maxPerSearch  || 20;   // results per city+category
-const CATEGORIES     = input.categories    || DEFAULT_CATEGORIES;
-const CITIES         = input.cities        || DEFAULT_CITIES;
-// ─────────────────────────────────────────────────────────────────────────
-
-log.info(`Starting scrape: ${CATEGORIES.length} categories × ${CITIES.length} cities = ${CATEGORIES.length * CITIES.length} searches`);
-
-const dataset = await Actor.openDataset();
-let total_imported = 0;
-
-for (const category of CATEGORIES) {
-    for (const city of CITIES) {
-        const search_term = `${category} in ${city.name}, ${city.state}`;
-        log.info(`Searching: ${search_term}`);
-
-        try {
-            // Call the Apify Google Maps Scraper actor
-            const run = await Actor.call('apify/google-maps-scraper', {
-                searchStringsArray:       [search_term],
-                maxCrawledPlacesPerSearch: MAX_PER_SEARCH,
-                language:                 'en',
-                includeReviews:           false,  // keep costs low
-                includeImages:            false,
-                exportPlaceUrls:          true,
-            }, { waitSecs: 300 });
-
-            // Fetch results from the run's dataset
-            const { items } = await Actor.apifyClient
-                .dataset(run.defaultDatasetId)
-                .listItems({ limit: MAX_PER_SEARCH });
-
-            // Enrich each item with our city/state/category metadata
-            const enriched = (items || []).map(item => ({
-                ...item,
-                _so_category:  category,
-                _so_city:      city.name,
-                _so_state:     city.state,
-                _so_state_abbr:city.abbr,
-            }));
-
-            if (enriched.length > 0) {
-                // Push to our dataset (visible in Apify console)
-                await dataset.pushData(enriched);
-
-                // Push directly to our webhook
-                await push_to_webhook(enriched, WEBHOOK_URL, WEBHOOK_SECRET);
-                total_imported += enriched.length;
-                log.info(`  → ${enriched.length} results for "${search_term}"`);
-            }
-
-        } catch (err) {
-            log.error(`Failed: ${search_term} — ${err.message}`);
-        }
-
-        // Be polite — small delay between searches
-        await sleep(2000);
-    }
-}
-
-log.info(`Done. Total records scraped: ${total_imported}`);
-await Actor.setValue('SUMMARY', { total_imported, categories: CATEGORIES.length, cities: CITIES.length });
-await Actor.exit();
-
-// ── Helpers ───────────────────────────────────────────────────────────────
-
-async function push_to_webhook(items, url, secret) {
-    const full_url = secret ? `${url}?token=${secret}` : url;
-    const response = await fetch(full_url, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(items),
-    });
-    if (!response.ok) {
-        log.warning(`Webhook returned ${response.status}`);
-    }
-}
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 // ── Default Data ──────────────────────────────────────────────────────────
 
 const DEFAULT_CATEGORIES = [
@@ -155,7 +71,7 @@ const DEFAULT_CATEGORIES = [
     'hardscape contractor',
 ];
 
-// Top 100 US cities — expand as needed
+// Top 100 US cities
 const DEFAULT_CITIES = [
     { name:'New York City',   state:'New York',       abbr:'NY' },
     { name:'Los Angeles',     state:'California',     abbr:'CA' },
@@ -257,3 +173,80 @@ const DEFAULT_CITIES = [
     { name:'Yonkers',         state:'New York',       abbr:'NY' },
     { name:'Huntington Beach',state:'California',     abbr:'CA' },
 ];
+
+// ── Config ────────────────────────────────────────────────────────────────
+const WEBHOOK_URL    = input.webhookUrl    || 'https://serviceordered.com/api/webhook.php';
+const WEBHOOK_SECRET = input.webhookSecret || '';
+const MAX_PER_SEARCH = input.maxPerSearch  || 20;
+const CATEGORIES     = input.categories    || DEFAULT_CATEGORIES;
+const CITIES         = input.cities        || DEFAULT_CITIES;
+// ─────────────────────────────────────────────────────────────────────────
+
+log.info(`Starting scrape: ${CATEGORIES.length} categories × ${CITIES.length} cities = ${CATEGORIES.length * CITIES.length} searches`);
+
+const dataset = await Actor.openDataset();
+let total_imported = 0;
+
+for (const category of CATEGORIES) {
+    for (const city of CITIES) {
+        const search_term = `${category} in ${city.name}, ${city.state}`;
+        log.info(`Searching: ${search_term}`);
+
+        try {
+            const run = await Actor.call('apify/google-maps-scraper', {
+                searchStringsArray:       [search_term],
+                maxCrawledPlacesPerSearch: MAX_PER_SEARCH,
+                language:                 'en',
+                includeReviews:           false,
+                includeImages:            false,
+                exportPlaceUrls:          true,
+            }, { waitSecs: 300 });
+
+            const { items } = await Actor.apifyClient
+                .dataset(run.defaultDatasetId)
+                .listItems({ limit: MAX_PER_SEARCH });
+
+            const enriched = (items || []).map(item => ({
+                ...item,
+                _so_category:  category,
+                _so_city:      city.name,
+                _so_state:     city.state,
+                _so_state_abbr:city.abbr,
+            }));
+
+            if (enriched.length > 0) {
+                await dataset.pushData(enriched);
+                await push_to_webhook(enriched, WEBHOOK_URL, WEBHOOK_SECRET);
+                total_imported += enriched.length;
+                log.info(`  → ${enriched.length} results for "${search_term}"`);
+            }
+
+        } catch (err) {
+            log.error(`Failed: ${search_term} — ${err.message}`);
+        }
+
+        await sleep(2000);
+    }
+}
+
+log.info(`Done. Total records scraped: ${total_imported}`);
+await Actor.setValue('SUMMARY', { total_imported, categories: CATEGORIES.length, cities: CITIES.length });
+await Actor.exit();
+
+// ── Helpers ───────────────────────────────────────────────────────────────
+
+async function push_to_webhook(items, url, secret) {
+    const full_url = secret ? `${url}?token=${secret}` : url;
+    const response = await fetch(full_url, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(items),
+    });
+    if (!response.ok) {
+        log.warning(`Webhook returned ${response.status}`);
+    }
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
