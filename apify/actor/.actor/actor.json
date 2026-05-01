@@ -12,18 +12,21 @@
             "webhookUrl": {
                 "title": "Webhook URL",
                 "type": "string",
+                "editor": "textfield",
                 "description": "Your ServiceOrdered webhook endpoint",
                 "default": "https://serviceordered.com/api/webhook.php"
             },
             "webhookSecret": {
                 "title": "Webhook Secret Token",
                 "type": "string",
+                "editor": "textfield",
                 "description": "Secret token for webhook authentication",
                 "isSecret": true
             },
             "maxPerSearch": {
                 "title": "Max Results Per Search",
                 "type": "integer",
+                "editor": "number",
                 "description": "Maximum listings to pull per category+city combination",
                 "default": 20,
                 "minimum": 1,
@@ -32,12 +35,14 @@
             "categories": {
                 "title": "Categories to Scrape",
                 "type": "array",
+                "editor": "stringList",
                 "description": "Leave empty to use all 50 default categories",
                 "items": { "type": "string" }
             },
             "cities": {
                 "title": "Cities to Scrape",
                 "type": "array",
+                "editor": "json",
                 "description": "Leave empty to use top 100 US cities",
                 "items": {
                     "type": "object",
