@@ -1,5 +1,4 @@
 {
-    "actorInputSchemaVersion": 1,
     "title": "ServiceOrdered Scraper Input",
     "type": "object",
     "schemaVersion": 1,
