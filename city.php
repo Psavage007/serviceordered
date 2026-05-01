@@ -62,15 +62,7 @@ $jsonld = [
 </head>
 <body>
 
-<nav>
-    <div class="container nav-inner">
-        <a href="/" class="nav-logo">Service<span>Ordered</span></a>
-        <ul class="nav-links">
-            <li><a href="/">Home</a></li>
-            <li><a href="/search.php">Search</a></li>
-        </ul>
-    </div>
-</nav>
+<?php require_once 'includes/nav.php'; ?>
 
 <div class="page-header">
     <div class="container">
@@ -213,8 +205,8 @@ $jsonld = [
         </div>
 
         <!-- SEO Content Block -->
-        <div style="margin:3rem 0;padding:2rem;background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius)">
-            <h2 style="font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:.75rem">
+        <div class="info-box" style="margin:3rem 0">
+            <h2 style="font-size:1rem;font-weight:700;color:var(--gray-800);margin-bottom:.75rem">
                 About <?= htmlspecialchars($cat['name']) ?> Services in <?= htmlspecialchars($location) ?>
             </h2>
             <p style="font-size:.9rem;color:var(--gray-600);line-height:1.7">
@@ -228,12 +220,7 @@ $jsonld = [
     <?php endif; ?>
 </div>
 
-<footer>
-    <div class="container footer-inner">
-        <div class="footer-logo">Service<span>Ordered</span></div>
-        <p>Specialty contractor listings across all 50 US states.</p>
-    </div>
-</footer>
+<?php require_once 'includes/footer.php'; ?>
 
 </body>
 </html>

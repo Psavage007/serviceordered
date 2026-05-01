@@ -79,15 +79,7 @@ if ($biz['rating'])  $jsonld['aggregateRating'] = [
 </head>
 <body>
 
-<nav>
-    <div class="container nav-inner">
-        <a href="/" class="nav-logo">Service<span>Ordered</span></a>
-        <ul class="nav-links">
-            <li><a href="/">Home</a></li>
-            <li><a href="/search.php">Search</a></li>
-        </ul>
-    </div>
-</nav>
+<?php require_once 'includes/nav.php'; ?>
 
 <div class="profile-hero">
     <div class="container">
@@ -245,12 +237,7 @@ if ($biz['rating'])  $jsonld['aggregateRating'] = [
     </div>
 </div>
 
-<footer>
-    <div class="container footer-inner">
-        <div class="footer-logo">Service<span>Ordered</span></div>
-        <p>Specialty contractor listings across all 50 US states.</p>
-    </div>
-</footer>
+<?php require_once 'includes/footer.php'; ?>
 
 </body>
 </html>
