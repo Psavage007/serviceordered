@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+Disallow: /includes/
+Disallow: /api/
+Disallow: /db/
+Disallow: /apify/
+
+Sitemap: https://serviceordered.com/sitemap.xml
