@@ -193,7 +193,7 @@ for (const category of CATEGORIES) {
         log.info(`Searching: ${search_term}`);
 
         try {
-            const run = await Actor.call('apify/google-maps-scraper', {
+            const run = await Actor.call('compass/crawler-google-places', {
                 searchStringsArray:       [search_term],
                 maxCrawledPlacesPerSearch: MAX_PER_SEARCH,
                 language:                 'en',
