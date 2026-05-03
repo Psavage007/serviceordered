@@ -2,6 +2,7 @@
 require_once 'includes/db.php';
 require_once 'includes/helpers.php';
 require_once 'includes/seo_head.php';
+require_once 'includes/user_auth.php';
 
 $categories = get_all_categories();
 
@@ -37,19 +38,7 @@ $jsonld = [
 </head>
 <body>
 
-<nav>
-    <div class="container nav-inner">
-        <a href="/" class="nav-logo">Service<span>Ordered</span></a>
-        <ul class="nav-links">
-            <li><a href="/">Home</a></li>
-            <li><a href="/electrical/">Electrical</a></li>
-            <li><a href="/plumbing/">Plumbing</a></li>
-            <li><a href="/hvac/">HVAC</a></li>
-            <li><a href="/search.php">All Services</a></li>
-        </ul>
-        <a href="/search.php" class="nav-cta">Find a Pro</a>
-    </div>
-</nav>
+<?php require_once 'includes/nav.php'; ?>
 
 <section class="hero">
     <div class="container hero-content">
@@ -150,6 +139,20 @@ $jsonld = [
             <?php endforeach; ?>
         </div>
         <?php endforeach; ?>
+    </div>
+</section>
+
+<section class="biz-cta-section">
+    <div class="container biz-cta-inner">
+        <div class="biz-cta-text">
+            <div class="section-label" style="text-align:left">For Contractors</div>
+            <h2 style="font-size:clamp(1.4rem,2.5vw,2rem);font-weight:800;color:var(--gray-900);letter-spacing:-.4px;margin:.35rem 0 .6rem">Grow your business with a free listing</h2>
+            <p style="color:var(--gray-500);font-size:.95rem;max-width:480px">Claim your existing profile or create a new one. Add photos, services, and pricing to stand out from competitors.</p>
+        </div>
+        <div class="biz-cta-actions">
+            <a href="/register.php" class="btn btn-primary" style="font-size:1rem;padding:.75rem 2rem">Create Free Account</a>
+            <a href="/login.php" class="btn btn-outline" style="font-size:1rem;padding:.75rem 2rem">Sign In</a>
+        </div>
     </div>
 </section>
 

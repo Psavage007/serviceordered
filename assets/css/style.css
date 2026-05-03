@@ -166,6 +166,16 @@ nav{background:var(--white);position:sticky;top:0;z-index:100;border-bottom:1px 
 .empty-state h2{color:var(--gray-600);margin:.75rem 0 .5rem;font-size:1.3rem}
 .empty-state p{font-size:.92rem}
 
+/* ── CONTRACTOR CTA ── */
+.biz-cta-section{background:var(--blue-light);border-top:1.5px solid var(--blue-mid);border-bottom:1.5px solid var(--blue-mid);padding:3rem 0}
+.biz-cta-inner{display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap}
+.biz-cta-actions{display:flex;gap:1rem;flex-shrink:0;flex-wrap:wrap}
+.btn{display:inline-block;border-radius:99px;font-weight:700;text-decoration:none;transition:all .15s;cursor:pointer;border:none;text-align:center}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:var(--blue2);color:#fff}
+.btn-outline{background:#fff;color:var(--blue);border:1.5px solid var(--blue)}
+.btn-outline:hover{background:var(--blue);color:#fff}
+
 /* ── WHY US SECTION ── */
 .why-section{padding:4rem 0;background:var(--blue);position:relative;overflow:hidden}
 .why-section::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--blue) 0%,var(--teal) 100%)}
@@ -204,6 +214,8 @@ footer{background:var(--gray-900);padding:3.5rem 0 2rem;margin-top:0}
   .why-grid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:768px){
+  .nav-actions .nav-cta-outline{display:none}
+  .biz-cta-inner{flex-direction:column;align-items:flex-start}
   .content-sidebar{grid-template-columns:1fr}
   .biz-actions{flex-direction:row;align-items:center}
   .nav-links{display:none}
