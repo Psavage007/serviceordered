@@ -231,38 +231,46 @@ $jsonld = [
 
 <script>
 (function(){
-    const input = document.getElementById('hero-q');
-    const list  = document.getElementById('hero-ac-list');
-    if (!input) return;
+    const input  = document.getElementById('hero-q');
+    const list   = document.getElementById('hero-ac-list');
+    const wrap   = list && list.closest('.search-wrap');
+    const form   = input && input.closest('form');
+    if (!input || !list) return;
     let timer;
+
+    const icon = `<svg class="ac-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>`;
+
+    function open(items) {
+        list.innerHTML = items.map(i =>
+            `<li data-val="${i.name.replace(/"/g,'&quot;')}" style="list-style:none">${icon}<span>${i.name}</span></li>`
+        ).join('');
+        list.style.display = 'block';
+        if (form) { form.style.borderBottomLeftRadius='0'; form.style.borderBottomRightRadius='0'; form.style.boxShadow='0 2px 5px rgba(0,0,0,.2)'; }
+    }
+
+    function close() {
+        list.innerHTML=''; list.style.display='none';
+        if (form) { form.style.borderBottomLeftRadius=''; form.style.borderBottomRightRadius=''; form.style.boxShadow=''; }
+    }
 
     input.addEventListener('input', function(){
         clearTimeout(timer);
         const q = this.value.trim();
-        if (q.length < 2) { list.innerHTML=''; list.style.display='none'; return; }
+        if (q.length < 2) { close(); return; }
         timer = setTimeout(() => {
             fetch('/api/categories-autocomplete.php?q=' + encodeURIComponent(q))
                 .then(r => r.json())
-                .then(items => {
-                    if (!items.length) { list.innerHTML=''; list.style.display='none'; return; }
-                    list.innerHTML = items.map(i =>
-                        `<li data-val="${i.name.replace(/"/g,'&quot;')}" style="list-style:none;padding:11px 18px;cursor:pointer;color:#374151;font-size:.93rem;font-weight:500;display:block">${i.name}</li>`
-                    ).join('');
-                    list.style.display = 'block';
-                });
-        }, 180);
+                .then(items => { items.length ? open(items) : close(); });
+        }, 150);
     });
 
     list.addEventListener('mousedown', function(e){
-        if (e.target.tagName === 'LI') {
-            input.value = e.target.dataset.val;
-            list.innerHTML=''; list.style.display='none';
-            input.closest('form').submit();
-        }
+        const li = e.target.closest('li');
+        if (li) { input.value = li.dataset.val; close(); input.closest('form').submit(); }
     });
 
     document.addEventListener('click', function(e){
-        if (!input.contains(e.target)) { list.innerHTML=''; list.style.display='none'; }
+        if (!input.contains(e.target) && !list.contains(e.target)) close();
     });
 })();
 </script>
