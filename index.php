@@ -59,7 +59,7 @@ $jsonld = [
                 </select>
                 <button type="submit">Search</button>
             </form>
-            <ul id="hero-ac-list" class="ac-dropdown"></ul>
+            <ul id="hero-ac-list" class="ac-dropdown" style="list-style:none;padding:0;margin:0"></ul>
         </div>
         <div class="hero-tags">
             <span>Popular:</span>
@@ -246,7 +246,7 @@ $jsonld = [
                 .then(items => {
                     if (!items.length) { list.innerHTML=''; list.style.display='none'; return; }
                     list.innerHTML = items.map(i =>
-                        `<li data-val="${i.name.replace(/"/g,'&quot;')}">${i.name}</li>`
+                        `<li data-val="${i.name.replace(/"/g,'&quot;')}" style="list-style:none;padding:11px 18px;cursor:pointer;color:#374151;font-size:.93rem;font-weight:500;display:block">${i.name}</li>`
                     ).join('');
                     list.style.display = 'block';
                 });
