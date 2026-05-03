@@ -22,13 +22,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-$q    = trim($_GET['q'] ?? '');
-$page = max(1, (int)($_GET['page'] ?? 1));
-$per  = 25;
-$off  = ($page - 1) * $per;
+$q        = trim($_GET['q']   ?? '');
+$cat_slug = trim($_GET['cat'] ?? '');
+$page     = max(1, (int)($_GET['page'] ?? 1));
+$per      = 25;
+$off      = ($page - 1) * $per;
 
-$where  = $q ? 'WHERE b.name LIKE ?' : '';
-$params = $q ? ['%' . $q . '%'] : [];
+$wheres = [];
+$params = [];
+
+if ($q) { $wheres[] = 'b.name LIKE ?'; $params[] = '%' . $q . '%'; }
+if ($cat_slug) {
+    $wheres[] = 'EXISTS (SELECT 1 FROM business_categories bc JOIN categories c ON c.id=bc.category_id WHERE bc.business_id=b.id AND c.slug=?)';
+    $params[] = $cat_slug;
+}
+$where = $wheres ? 'WHERE ' . implode(' AND ', $wheres) : '';
 
 $total = $db->prepare("SELECT COUNT(*) FROM businesses b $where");
 $total->execute($params);
@@ -46,6 +54,8 @@ $stmt = $db->prepare("
 ");
 $stmt->execute($params);
 $businesses = $stmt->fetchAll();
+
+$all_cats = $db->query("SELECT name, slug FROM categories ORDER BY name")->fetchAll();
 $pages = ceil($total / $per);
 
 admin_layout_head('Businesses', 'businesses');
@@ -54,9 +64,17 @@ admin_layout_head('Businesses', 'businesses');
 <div class="admin-table-wrap">
     <div class="admin-table-header">
         <h2><?= number_format($total) ?> Businesses</h2>
-        <form class="admin-search" method="GET">
+        <form class="admin-search" method="GET" style="display:flex;gap:.5rem;flex-wrap:wrap">
             <input type="text" name="q" value="<?= htmlspecialchars($q) ?>" placeholder="Search by name...">
-            <button type="submit">Search</button>
+            <div style="position:relative">
+                <input type="text" name="cat" id="admin-cat-input" value="<?= htmlspecialchars($cat_slug) ?>"
+                       placeholder="Filter by service..." autocomplete="off" style="min-width:200px">
+                <ul id="admin-ac-list" class="ac-dropdown ac-dropdown-dark"></ul>
+            </div>
+            <button type="submit">Filter</button>
+            <?php if ($q || $cat_slug): ?>
+            <a href="/admin/businesses.php" style="padding:.4rem .85rem;border-radius:6px;font-size:.82rem;color:var(--gray-400);border:1px solid var(--gray-600);text-decoration:none;line-height:1.8">Clear</a>
+            <?php endif; ?>
         </form>
     </div>
     <table class="admin-table">
@@ -141,5 +159,54 @@ admin_layout_head('Businesses', 'businesses');
     </div>
     <?php endif; ?>
 </div>
+
+<script>
+(function(){
+    const input = document.getElementById('admin-cat-input');
+    const list  = document.getElementById('admin-ac-list');
+    if (!input) return;
+    let timer;
+
+    // Pre-populate display value from slug
+    const cats = <?= json_encode(array_map(fn($c) => ['name' => $c['name'], 'slug' => $c['slug']], $all_cats)) ?>;
+    if (input.value) {
+        const match = cats.find(c => c.slug === input.value);
+        if (match) input.value = match.name;
+    }
+
+    input.addEventListener('input', function(){
+        clearTimeout(timer);
+        const q = this.value.trim().toLowerCase();
+        if (q.length < 1) { list.innerHTML=''; list.style.display='none'; return; }
+        timer = setTimeout(() => {
+            const matches = cats.filter(c => c.name.toLowerCase().includes(q)).slice(0, 10);
+            if (!matches.length) { list.innerHTML=''; list.style.display='none'; return; }
+            list.innerHTML = matches.map(i =>
+                `<li data-slug="${i.slug}" data-name="${i.name.replace(/"/g,'&quot;')}">${i.name}</li>`
+            ).join('');
+            list.style.display = 'block';
+        }, 100);
+    });
+
+    list.addEventListener('mousedown', function(e){
+        if (e.target.tagName === 'LI') {
+            input.value = e.target.dataset.name;
+            input.name  = 'cat'; // keep as text, we submit slug via hidden
+            // swap to slug for submission
+            const hidden = document.createElement('input');
+            hidden.type  = 'hidden';
+            hidden.name  = 'cat';
+            hidden.value = e.target.dataset.slug;
+            input.name   = '_cat_display';
+            input.closest('form').appendChild(hidden);
+            list.innerHTML=''; list.style.display='none';
+        }
+    });
+
+    document.addEventListener('click', function(e){
+        if (!input.contains(e.target)) { list.innerHTML=''; list.style.display='none'; }
+    });
+})();
+</script>
 
 <?php admin_layout_foot(); ?>

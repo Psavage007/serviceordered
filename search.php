@@ -83,7 +83,11 @@ $states = get_db()->query('SELECT name, slug FROM states ORDER BY name')->fetchA
     <div class="container">
         <h1>Search Contractors</h1>
         <form class="search-box" action="/search.php" method="GET" style="max-width:660px;margin-top:1rem">
-            <input type="text" name="q" value="<?= htmlspecialchars($query) ?>" placeholder="Service type or company name..." autocomplete="off" required>
+            <div class="search-field" style="position:relative">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                <input type="text" name="q" id="search-q" value="<?= htmlspecialchars($query) ?>" placeholder="Service type or company name..." autocomplete="off">
+                <ul id="ac-list" class="ac-dropdown"></ul>
+            </div>
             <select name="state">
                 <option value="">All States</option>
                 <?php foreach ($states as $s): ?>
@@ -151,6 +155,44 @@ $states = get_db()->query('SELECT name, slug FROM states ORDER BY name')->fetchA
 </div>
 
 <?php require_once 'includes/footer.php'; ?>
+
+<script>
+(function(){
+    const input = document.getElementById('search-q');
+    const list  = document.getElementById('ac-list');
+    if (!input) return;
+    let timer;
+
+    input.addEventListener('input', function(){
+        clearTimeout(timer);
+        const q = this.value.trim();
+        if (q.length < 2) { list.innerHTML=''; list.style.display='none'; return; }
+        timer = setTimeout(() => {
+            fetch('/api/categories-autocomplete.php?q=' + encodeURIComponent(q))
+                .then(r => r.json())
+                .then(items => {
+                    if (!items.length) { list.innerHTML=''; list.style.display='none'; return; }
+                    list.innerHTML = items.map(i =>
+                        `<li data-val="${i.name.replace(/"/g,'&quot;')}">${i.name}</li>`
+                    ).join('');
+                    list.style.display = 'block';
+                });
+        }, 180);
+    });
+
+    list.addEventListener('mousedown', function(e){
+        if (e.target.tagName === 'LI') {
+            input.value = e.target.dataset.val;
+            list.innerHTML=''; list.style.display='none';
+            input.closest('form').submit();
+        }
+    });
+
+    document.addEventListener('click', function(e){
+        if (!input.contains(e.target)) { list.innerHTML=''; list.style.display='none'; }
+    });
+})();
+</script>
 
 </body>
 </html>

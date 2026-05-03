@@ -80,6 +80,11 @@ table.admin-table tr:hover td{background:var(--gray-50)}
 .admin-pagination a:hover{border-color:var(--blue);color:var(--blue)}
 .admin-pagination .cur{background:var(--blue);color:#fff;border-color:var(--blue)}
 
+/* Autocomplete */
+.ac-dropdown-dark{position:absolute;top:100%;left:0;right:0;background:var(--gray-800);border:1px solid var(--gray-600);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.4);list-style:none;margin:4px 0 0;padding:.25rem 0;z-index:200;display:none;min-width:220px;max-height:280px;overflow-y:auto}
+.ac-dropdown-dark li{padding:.5rem 1rem;font-size:.85rem;color:var(--gray-200);cursor:pointer}
+.ac-dropdown-dark li:hover{background:var(--gray-700);color:#fff}
+
 /* Alert */
 .admin-alert{padding:.75rem 1.25rem;border-radius:8px;font-size:.88rem;margin-bottom:1.25rem}
 .admin-alert-green{background:#dcfce7;color:#15803d;border:1px solid #bbf7d0}
