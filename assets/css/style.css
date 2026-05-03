@@ -49,7 +49,7 @@ nav{background:var(--white);position:sticky;top:0;z-index:100;border-bottom:1px 
 .search-wrap{max-width:700px;margin:0 auto}
 .search-box{display:flex;background:#fff;border-radius:var(--radius);box-shadow:0 12px 40px rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.2);overflow:visible;position:relative}
 .search-box:focus-within{box-shadow:0 12px 40px rgba(0,0,0,.35),0 0 0 3px rgba(21,88,214,.4)}
-.search-field{display:flex;align-items:center;flex:1;padding:0 1.25rem;gap:.6rem;border-right:1px solid var(--gray-200)}
+.search-field{display:flex;align-items:center;flex:1;padding:0 1.25rem;gap:.6rem;border-right:1px solid var(--gray-200);position:relative}
 .search-field svg{color:var(--gray-400);flex-shrink:0}
 .search-field input{flex:1;border:none;outline:none;font-size:1rem;color:var(--gray-800);background:transparent;padding:.95rem 0}
 .search-field input::placeholder{color:var(--gray-400)}
@@ -203,9 +203,10 @@ footer{background:var(--gray-900);padding:3.5rem 0 2rem;margin-top:0}
 .footer-bottom a:hover{color:var(--gray-300)}
 
 /* ── AUTOCOMPLETE ── */
-.ac-dropdown{position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid var(--gray-200);border-radius:8px;box-shadow:var(--shadow-md);list-style:none;margin:4px 0 0;padding:.25rem 0;z-index:200;display:none;max-height:280px;overflow-y:auto}
-.ac-dropdown li{padding:.55rem 1rem;font-size:.9rem;color:var(--gray-700);cursor:pointer}
-.ac-dropdown li:hover{background:var(--blue-light);color:var(--blue)}
+.ac-dropdown{position:absolute;top:calc(100% + 8px);left:-1.25rem;min-width:280px;background:#fff;border:1px solid var(--gray-200);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.15);list-style:none;margin:0;padding:.4rem 0;z-index:500;display:none;overflow:hidden}
+.ac-dropdown li{display:flex;align-items:center;gap:.65rem;padding:.65rem 1.1rem;font-size:.92rem;color:var(--gray-700);cursor:pointer;transition:background .1s;list-style:none}
+.ac-dropdown li::before{content:'🔍';font-size:.78rem;opacity:.5;flex-shrink:0}
+.ac-dropdown li:hover,.ac-dropdown li:focus{background:var(--blue-light);color:var(--blue)}
 
 /* ── UTILITY ── */
 .tag{display:inline-block;font-size:.73rem;padding:.22rem .6rem;border-radius:5px;background:var(--blue-light);color:var(--blue);margin:.15rem;font-weight:500}
