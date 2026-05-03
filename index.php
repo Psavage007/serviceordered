@@ -49,7 +49,8 @@ $jsonld = [
             <form class="search-box" action="/search.php" method="GET">
                 <div class="search-field">
                     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                    <input type="text" name="q" placeholder="What service do you need?" autocomplete="off" aria-label="Search service type or company name">
+                    <input type="text" name="q" id="hero-q" placeholder="What service do you need?" autocomplete="off" aria-label="Search service type or company name">
+                    <ul id="hero-ac-list" class="ac-dropdown"></ul>
                 </div>
                 <select name="state" aria-label="Select state">
                     <option value="">📍 All States</option>
@@ -228,5 +229,42 @@ $jsonld = [
     </div>
 </footer>
 
+<script>
+(function(){
+    const input = document.getElementById('hero-q');
+    const list  = document.getElementById('hero-ac-list');
+    if (!input) return;
+    let timer;
+
+    input.addEventListener('input', function(){
+        clearTimeout(timer);
+        const q = this.value.trim();
+        if (q.length < 2) { list.innerHTML=''; list.style.display='none'; return; }
+        timer = setTimeout(() => {
+            fetch('/api/categories-autocomplete.php?q=' + encodeURIComponent(q))
+                .then(r => r.json())
+                .then(items => {
+                    if (!items.length) { list.innerHTML=''; list.style.display='none'; return; }
+                    list.innerHTML = items.map(i =>
+                        `<li data-val="${i.name.replace(/"/g,'&quot;')}">${i.name}</li>`
+                    ).join('');
+                    list.style.display = 'block';
+                });
+        }, 180);
+    });
+
+    list.addEventListener('mousedown', function(e){
+        if (e.target.tagName === 'LI') {
+            input.value = e.target.dataset.val;
+            list.innerHTML=''; list.style.display='none';
+            input.closest('form').submit();
+        }
+    });
+
+    document.addEventListener('click', function(e){
+        if (!input.contains(e.target)) { list.innerHTML=''; list.style.display='none'; }
+    });
+})();
+</script>
 </body>
 </html>
