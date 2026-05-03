@@ -45,12 +45,11 @@ $jsonld = [
         <div class="hero-badge">✅ &nbsp;Verified GMB Listings &bull; All 50 States</div>
         <h1>Find Trusted Specialty<br>Contractors <em>Near You</em></h1>
         <p class="hero-sub">From electrical and plumbing to radon mitigation, dock builders, and 45 more specialty trades — real listings, real ratings.</p>
-        <div class="search-wrap">
+        <div class="search-wrap" style="position:relative">
             <form class="search-box" action="/search.php" method="GET">
                 <div class="search-field">
                     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
                     <input type="text" name="q" id="hero-q" placeholder="What service do you need?" autocomplete="off" aria-label="Search service type or company name">
-                    <ul id="hero-ac-list" class="ac-dropdown"></ul>
                 </div>
                 <select name="state" aria-label="Select state">
                     <option value="">📍 All States</option>
@@ -60,6 +59,7 @@ $jsonld = [
                 </select>
                 <button type="submit">Search</button>
             </form>
+            <ul id="hero-ac-list" class="ac-dropdown"></ul>
         </div>
         <div class="hero-tags">
             <span>Popular:</span>

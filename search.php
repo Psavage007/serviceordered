@@ -82,22 +82,24 @@ $states = get_db()->query('SELECT name, slug FROM states ORDER BY name')->fetchA
 <div class="page-header">
     <div class="container">
         <h1>Search Contractors</h1>
-        <form class="search-box" action="/search.php" method="GET" style="max-width:660px;margin-top:1rem">
-            <div class="search-field">
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                <input type="text" name="q" id="search-q" value="<?= htmlspecialchars($query) ?>" placeholder="Service type or company name..." autocomplete="off">
-                <ul id="ac-list" class="ac-dropdown"></ul>
-            </div>
-            <select name="state">
-                <option value="">All States</option>
-                <?php foreach ($states as $s): ?>
-                <option value="<?= htmlspecialchars($s['slug']) ?>" <?= $state_slug === $s['slug'] ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($s['name']) ?>
-                </option>
-                <?php endforeach; ?>
-            </select>
-            <button type="submit">Search</button>
-        </form>
+        <div style="position:relative;max-width:660px;margin-top:1rem">
+            <form class="search-box" action="/search.php" method="GET">
+                <div class="search-field">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                    <input type="text" name="q" id="search-q" value="<?= htmlspecialchars($query) ?>" placeholder="Service type or company name..." autocomplete="off">
+                </div>
+                <select name="state">
+                    <option value="">All States</option>
+                    <?php foreach ($states as $s): ?>
+                    <option value="<?= htmlspecialchars($s['slug']) ?>" <?= $state_slug === $s['slug'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($s['name']) ?>
+                    </option>
+                    <?php endforeach; ?>
+                </select>
+                <button type="submit">Search</button>
+            </form>
+            <ul id="ac-list" class="ac-dropdown"></ul>
+        </div>
     </div>
 </div>
 

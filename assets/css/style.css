@@ -203,10 +203,11 @@ footer{background:var(--gray-900);padding:3.5rem 0 2rem;margin-top:0}
 .footer-bottom a:hover{color:var(--gray-300)}
 
 /* ── AUTOCOMPLETE ── */
-.ac-dropdown{position:absolute;top:calc(100% + 8px);left:-1.25rem;min-width:280px;background:#fff;border:1px solid var(--gray-200);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.15);list-style:none;margin:0;padding:.4rem 0;z-index:500;display:none;overflow:hidden}
-.ac-dropdown li{display:flex;align-items:center;gap:.65rem;padding:.65rem 1.1rem;font-size:.92rem;color:var(--gray-700);cursor:pointer;transition:background .1s;list-style:none}
-.ac-dropdown li::before{content:'🔍';font-size:.78rem;opacity:.5;flex-shrink:0}
-.ac-dropdown li:hover,.ac-dropdown li:focus{background:var(--blue-light);color:var(--blue)}
+.ac-dropdown{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1px solid var(--gray-200);border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.18);list-style:none;margin:0;padding:.5rem 0;z-index:500;display:none;overflow:hidden}
+.ac-dropdown li{display:flex;align-items:center;gap:.75rem;padding:.7rem 1.25rem;font-size:.95rem;color:var(--gray-700);cursor:pointer;transition:background .1s;list-style:none;border:none}
+.ac-dropdown li::before{content:'';display:inline-block;width:16px;height:16px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%239ca3af' stroke-width='2' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E") center/contain no-repeat;flex-shrink:0}
+.ac-dropdown li:hover{background:var(--blue-light);color:var(--blue)}
+.ac-dropdown li:hover::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%231558d6' stroke-width='2' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E")}
 
 /* ── UTILITY ── */
 .tag{display:inline-block;font-size:.73rem;padding:.22rem .6rem;border-radius:5px;background:var(--blue-light);color:var(--blue);margin:.15rem;font-weight:500}
