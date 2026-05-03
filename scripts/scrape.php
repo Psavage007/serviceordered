@@ -10,7 +10,7 @@ $API_KEY     = getenv('GOOGLE_PLACES_KEY') ?: '';
 $PROGRESS    = '/var/log/so_scrape_progress.json';
 $MAX_RESULTS = 20;
 $DELAY_MS    = 200; // ms between API calls (5 req/sec max on free tier)
-$MAX_REQUESTS = 4500; // hard cap — 4,500 requests × $0.017 = ~$76, safely under $200 free credit
+$MAX_REQUESTS = 11500; // hard cap — 11,500 requests × $0.017 = ~$196, uses full $200 free credit
 
 if (!$API_KEY) { die("ERROR: GOOGLE_PLACES_KEY env var not set\n"); }
 
