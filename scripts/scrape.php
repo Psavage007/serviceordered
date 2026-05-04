@@ -50,6 +50,7 @@ $CATEGORIES = [
     'fire restoration contractor','water damage restoration',
     'welding contractor',         'sandblasting service',
     'epoxy flooring contractor',  'stucco contractor',
+    'dumpster rental',            'roll off dumpster rental',
 ];
 
 $CITIES = [

@@ -61,6 +61,8 @@ $CATEGORIES = [
     'waterdamagerestoration' => 'water-damage-restoration',
     'fireprotectionservices' => 'fire-restoration-contractor',
     'radonservices'          => 'radon-mitigation',
+    'dumpsterrental'         => 'dumpster-rental',
+    'rolloffservices'        => 'dumpster-rental',
 ];
 
 $CITIES = [
