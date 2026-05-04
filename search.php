@@ -38,8 +38,8 @@ if ($query) {
     $stmt->execute($params);
     $results = $stmt->fetchAll();
 
-    // Also search by category name
-    if (count($results) < 10) {
+    // Also search by category name and aliases
+    if (count($results) < 40) {
         $sql2 = '
             SELECT DISTINCT b.*, ci.name AS city_name, ci.slug AS city_slug,
                    s.name AS state_name, s.slug AS state_slug, s.abbreviation AS state_abbr
@@ -48,11 +48,12 @@ if ($query) {
             JOIN categories c ON c.id = bc.category_id
             LEFT JOIN cities ci ON ci.id = b.city_id
             LEFT JOIN states s  ON s.id  = ci.state_id
-            WHERE c.name LIKE ?
+            WHERE (c.name LIKE ? OR c.aliases LIKE ?)
         ';
-        $p2 = ['%' . $query . '%'];
+        $like = '%' . $query . '%';
+        $p2 = [$like, $like];
         if ($state_id) { $sql2 .= ' AND ci.state_id = ?'; $p2[] = $state_id; }
-        $sql2 .= ' ORDER BY b.rating DESC LIMIT 20';
+        $sql2 .= ' ORDER BY b.featured DESC, b.rating DESC LIMIT 40';
         $stmt2 = $db->prepare($sql2);
         $stmt2->execute($p2);
         $cat_results = $stmt2->fetchAll();
