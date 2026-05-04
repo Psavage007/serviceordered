@@ -9,23 +9,38 @@ $cat  = get_category_by_slug($slug);
 
 if (!$cat) { http_response_code(404); include '404.php'; exit; }
 
-$states = get_states_with_listings((int)$cat['id']);
+$states     = get_states_with_listings((int)$cat['id']);
 $all_states = get_db()->query('SELECT * FROM states ORDER BY name')->fetchAll();
+$year       = date('Y');
+$total_biz  = array_sum(array_column($states, 'business_count'));
+
+$jsonld = [
+    [
+        '@context' => 'https://schema.org',
+        '@type'    => 'BreadcrumbList',
+        'itemListElement' => [
+            ['@type'=>'ListItem','position'=>1,'name'=>'Home','item'=>'https://serviceordered.com/'],
+            ['@type'=>'ListItem','position'=>2,'name'=>$cat['name'].' Contractors','item'=>'https://serviceordered.com/'.$cat['slug'].'/'],
+        ],
+    ],
+    [
+        '@context'    => 'https://schema.org',
+        '@type'       => 'CollectionPage',
+        'name'        => $cat['name'] . ' Contractors — All 50 States',
+        'description' => $cat['description'],
+        'url'         => 'https://serviceordered.com/' . $cat['slug'] . '/',
+        'numberOfItems' => $total_biz,
+    ],
+];
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <?php seo_head([
-    'title'       => $cat['name'] . ' Contractors by State | ServiceOrdered',
-    'description' => 'Find ' . $cat['name'] . ' contractors in every US state and city. ' . $cat['description'] . ' Browse listings near you.',
+    'title'       => 'Find ' . $cat['name'] . ' Contractors Near You (' . $year . ') | ServiceOrdered',
+    'description' => 'Find trusted ' . strtolower($cat['name']) . ' contractors in every US state and city. ' . number_format($total_biz) . ' verified listings with ratings, phone numbers, and websites. ' . $cat['description'] . '.',
     'canonical'   => 'https://serviceordered.com/' . $cat['slug'] . '/',
-    'jsonld'      => [
-        '@context' => 'https://schema.org',
-        '@type'    => 'CollectionPage',
-        'name'     => $cat['name'] . ' Contractors — All States',
-        'description' => $cat['description'],
-        'url'      => 'https://serviceordered.com/' . $cat['slug'] . '/',
-    ],
+    'jsonld'      => $jsonld,
 ]); ?>
 </head>
 <body>
@@ -38,8 +53,8 @@ $all_states = get_db()->query('SELECT * FROM states ORDER BY name')->fetchAll();
             <li><a href="/">Home</a></li>
             <li><?= htmlspecialchars($cat['name']) ?></li>
         </ol>
-        <h1><?= $cat['icon'] ?> <?= htmlspecialchars($cat['name']) ?> Contractors</h1>
-        <p><?= htmlspecialchars($cat['description']) ?> — Browse by state to find contractors near you.</p>
+        <h1><?= $cat['icon'] ?> <?= htmlspecialchars($cat['name']) ?> Contractors Near You</h1>
+        <p><?= htmlspecialchars($cat['description']) ?> — <?= number_format($total_biz) ?> verified contractors across <?= count($states) ?> states. Browse by state to find pros near you.</p>
     </div>
 </div>
 
@@ -91,6 +106,22 @@ $all_states = get_db()->query('SELECT * FROM states ORDER BY name')->fetchAll();
         </div>
     <?php endif; ?>
 
+</div>
+
+<div class="container" style="margin-bottom:3rem">
+    <div class="info-box">
+        <h2 style="font-size:1.05rem;font-weight:700;color:var(--gray-800);margin-bottom:.75rem">
+            About <?= htmlspecialchars($cat['name']) ?> Contractors on ServiceOrdered
+        </h2>
+        <p style="font-size:.9rem;color:var(--gray-600);line-height:1.8">
+            ServiceOrdered is the largest directory of specialty <?= strtolower($cat['name']) ?> contractors in the United States,
+            with <?= number_format($total_biz) ?> verified listings across <?= count($states) ?> states.
+            <?= htmlspecialchars($cat['description']) ?>.
+            All listings are sourced from Google My Business and include verified ratings, real customer reviews,
+            direct phone numbers, and business websites — so you can compare and contact contractors without any middleman or lead fees.
+            Select your state above to find <?= strtolower($cat['name']) ?> professionals near you.
+        </p>
+    </div>
 </div>
 
 <?php require_once 'includes/footer.php'; ?>

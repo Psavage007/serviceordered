@@ -29,7 +29,9 @@ function seo_head(array $seo): void {
     <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','<?= htmlspecialchars($ga_id) ?>');</script>
     <?php endif; ?>
     <?php if ($jsonld): ?>
-    <script type="application/ld+json"><?= json_encode($jsonld, JSON_UNESCAPED_SLASHES) ?></script>
+    <?php foreach ((isset($jsonld[0]) && is_array($jsonld[0]) ? $jsonld : [$jsonld]) as $ld): ?>
+    <script type="application/ld+json"><?= json_encode($ld, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE) ?></script>
+    <?php endforeach; ?>
     <?php endif; ?>
 <?php
 }
