@@ -8,10 +8,8 @@ $_nav_user = $_SESSION['user'] ?? null;
         <a href="/" class="nav-logo">Service<span>Ordered</span></a>
         <ul class="nav-links">
             <li><a href="/">Home</a></li>
-            <li><a href="/electrical/">Electrical</a></li>
-            <li><a href="/plumbing/">Plumbing</a></li>
-            <li><a href="/hvac/">HVAC</a></li>
-            <li><a href="/search.php">All Services</a></li>
+            <li><a href="/search.php">Search</a></li>
+            <li><a href="/about.php">About Us</a></li>
         </ul>
         <div class="nav-actions">
             <?php if ($_nav_user): ?>
