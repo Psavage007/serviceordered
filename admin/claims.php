@@ -48,11 +48,11 @@ admin_layout_head('Business Claims', 'claims');
     </div>
     <table class="admin-table">
         <thead>
-            <tr><th>Business</th><th>Claimed By</th><th>Submitted</th><th>Status</th><th>Actions</th></tr>
+            <tr><th>Business</th><th>Claimed By</th><th>Verification</th><th>Submitted</th><th>Status</th><th>Actions</th></tr>
         </thead>
         <tbody>
             <?php if (empty($claims)): ?>
-            <tr><td colspan="5" style="text-align:center;padding:3rem;color:var(--gray-400)">No <?= $filter ?> claims</td></tr>
+            <tr><td colspan="6" style="text-align:center;padding:3rem;color:var(--gray-400)">No <?= $filter ?> claims</td></tr>
             <?php else: ?>
             <?php foreach ($claims as $c): ?>
             <tr>
@@ -62,6 +62,22 @@ admin_layout_head('Business Claims', 'claims');
                 <td>
                     <div style="font-weight:500"><?= htmlspecialchars($c['user_name'] ?: '—') ?></div>
                     <div style="font-size:.78rem;color:var(--gray-400)"><?= htmlspecialchars($c['user_email']) ?></div>
+                </td>
+                <td>
+                    <?php if ($c['license_number']): ?>
+                    <div style="font-size:.82rem"><strong>License:</strong> <?= htmlspecialchars($c['license_number']) ?><?= $c['license_state'] ? ' (' . htmlspecialchars($c['license_state']) . ')' : '' ?></div>
+                    <?php endif; ?>
+                    <?php if ($c['business_email']): ?>
+                    <div style="font-size:.82rem"><strong>Email:</strong> <?= htmlspecialchars($c['business_email']) ?></div>
+                    <?php endif; ?>
+                    <?php if ($c['license_doc']): ?>
+                    <a href="<?= htmlspecialchars($c['license_doc']) ?>" target="_blank" class="btn-sm btn-sm-blue" style="margin-top:.3rem;display:inline-block">View Doc</a>
+                    <?php else: ?>
+                    <span style="font-size:.78rem;color:var(--gray-400)">No document</span>
+                    <?php endif; ?>
+                    <?php if ($c['notes']): ?>
+                    <div style="font-size:.78rem;color:var(--gray-500);margin-top:.25rem;font-style:italic"><?= htmlspecialchars($c['notes']) ?></div>
+                    <?php endif; ?>
                 </td>
                 <td style="color:var(--gray-400);font-size:.8rem"><?= date('M j, Y', strtotime($c['created_at'])) ?></td>
                 <td>
