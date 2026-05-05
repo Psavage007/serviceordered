@@ -8,9 +8,7 @@ $db       = get_db();
 $business = user_get_business($db, $user['id']);
 
 if (!$business) {
-    dash_head('Business Profile', 'profile');
-    echo '<div class="dash-alert dash-alert-amber">You don\'t have an approved business yet. <a href="/dashboard/claim.php" style="font-weight:700;color:#92400e">Claim a listing</a> first.</div>';
-    dash_foot();
+    header('Location: /dashboard/onboarding.php');
     exit;
 }
 
